@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\JWTAuthController;
+// use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FileController;
+// use App\Http\Controllers\FileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,12 +16,20 @@ use App\Http\Controllers\FileController;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware("api")
+    ->controller(JWTAuthController::class)
+    ->group(function () {
+    Route::post('login', 'login')->withoutMiddleware("api");
+    Route::post('logout', 'logout');
+    Route::post('refresh', 'refresh');
+    Route::post('user', 'user');
+
 });
 
-Route::prefix('files')->controller(FileController::class)->group(function () {
-    Route::get('/', 'index');
-    Route::post('/', 'store');
-    Route::delete('{user}/{file}', 'destroy');
-});
+// Route::prefix('files')
+//     ->controller(FileController::class)
+//     ->group(function () {
+//     Route::get('/', 'index');
+//     Route::post('/', 'store');
+//     Route::delete('{user}/{file}', 'destroy');
+// });
