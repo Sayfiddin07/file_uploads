@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'name'=>'John Doe',
-                'email'=>'moderator@mail.com',
+                'email'=>'john@mail.com',
                 'password'=>bcrypt('password')
             ],
             [
