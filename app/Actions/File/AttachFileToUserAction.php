@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Actions;
+namespace App\Actions\File;
 
 use App\Models\File;
 
 class AttachFileToUserAction
 {
-    public function execute(File $file)
+    public function execute(File $file): File
     {
         $file->users()->sync([
-            'user_id' => 1
+            'user_id' => auth()->user()->id
         ]);
         return $file;
     }

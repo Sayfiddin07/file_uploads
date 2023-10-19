@@ -2,70 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\AttachFileToUserAction;
-use App\Actions\DeleteFileAction;
-use App\Actions\StoreFileAction;
-use App\DTO\FileDTO;
-use App\Models\File;
+use App\Actions\File\DeleteFileAction;
+use App\Actions\File\StoreFileAction;
+use App\Helpers\ResponseHelper;
 use App\Http\Requests\StoreFileRequest;
-use App\Http\Requests\UpdateFileRequest;
+use App\Models\File;
 use App\Models\User;
+
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+
 use Throwable;
-use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
 
-
-    public function index(): Collection
+    public function index()
     {
-        return File::all();
+        $user = auth()->user();
+        if($user->hasRole('user')){
+
+        };
+
     }
 
-    public function store(StoreFileRequest $request, StoreFileAction $storeFileAction, AttachFileToUserAction $attachFileToUserAction)
+    public function store(StoreFileRequest $request, StoreFileAction $storeFileAction): JsonResponse
     {
         try {
-            $files = File::all();
-
-            if (count($files) === 0) {
-                return $storeFileAction->execute(FileDTO::fromStoreRequest($request));
-            }
-
-            foreach ($files as $file) {
-                if (
-                    Storage::has($file->path) && md5_file($request->file('file')) === md5_file(storage_path() . '/app/uploads/' . $file->path)) {
-                    return $attachFileToUserAction->execute($file);
-                }
-            }
-            return $storeFileAction->execute(FileDTO::fromStoreRequest($request));
-
+            $file = $request->file('file');
+            $result = $storeFileAction->execute($file);
+            return ResponseHelper::success(data: $result->toArray());
         } catch (Throwable $e) {
-            return $e;
+            return ResponseHelper::success(message: $e->getMessage());
         }
-
-
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateFileRequest $request, File $file)
+    public function destroy(User $user, File $file, DeleteFileAction $deleteFileAction): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user, File $file, DeleteFileAction $deleteFileAction)
-    {
+        $this->authorize('delete');
         try {
             $deleteFileAction->exectue($user, $file);
-            return 'successfully_deleted';
+            return ResponseHelper::success(message: 'Successfully deleted');
+
         } catch (Throwable $e) {
-            return $e;
+            return ResponseHelper::error(message: $e->getMessage());
         }
     }
 }

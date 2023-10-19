@@ -1,9 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\JWTAuthController;
-// use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-// use App\Http\Controllers\FileController;
+use App\Http\Controllers\FileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,20 +15,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware("api")
+
+
+Route::prefix('auth')
+    ->middleware("auth_jwt")
     ->controller(JWTAuthController::class)
     ->group(function () {
-    Route::post('login', 'login')->withoutMiddleware("api");
-    Route::post('logout', 'logout');
-    Route::post('refresh', 'refresh');
-    Route::post('user', 'user');
+        Route::post('login', 'login')->withoutMiddleware('auth_jwt');
+        Route::post('logout', 'logout');
+        Route::post('refresh', 'refresh');
+        Route::post('user', 'user');
+    });
 
-});
-
-// Route::prefix('files')
-//     ->controller(FileController::class)
-//     ->group(function () {
-//     Route::get('/', 'index');
-//     Route::post('/', 'store');
-//     Route::delete('{user}/{file}', 'destroy');
-// });
+Route::prefix('files')
+    ->middleware("auth_jwt")
+    ->controller(FileController::class)
+    ->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::delete('{user}/{file}', 'destroy');
+    });
