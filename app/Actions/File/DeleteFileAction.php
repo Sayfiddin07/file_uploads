@@ -11,7 +11,6 @@ class DeleteFileAction
     public function exectue(User $user, File $file): void
     {
         $file_user = $file->users();
-        Storage::delete($file->path);
         if ($file_user->count() === 1 && $file->id ===$file->users()->first()->id) {
             $file_user->detach([$user->id]);
             Storage::delete($file->path);

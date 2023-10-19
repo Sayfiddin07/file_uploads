@@ -16,7 +16,7 @@ class RolePermissionSeeder extends Seeder
     {
         $read= Permission::create(['name' => 'read:files']);
         $upload = Permission::create(['name' => 'upload:files']);
-        $delete =  $Permission::create(['name' => 'delete:files']);
+        $delete =  Permission::create(['name' => 'delete:files']);
 
     }
 }

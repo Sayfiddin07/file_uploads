@@ -22,19 +22,17 @@ class File extends Model
         return $this->belongsToMany(User::class, 'user_files');
     }
 
-    public function scopeInitQuery(Builder $query)
+    public function scopeInitQuery(Builder $query):Builder
     {
         $user= auth()->user();
 
-        if($user->hasRole('admin') or $user->hasRole('moderator') ){
+        if($user->hasRole('user')){
             return $query->whereHas('users', function (Builder $q) {
                 return $q->where('id', '=', auth()->id());
             });
-        }else {
-            return $query;
         }
-
-
+            return $query;
+      
     }
 
 

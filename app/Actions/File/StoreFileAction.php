@@ -40,8 +40,10 @@ class StoreFileAction
                 $new_file = File::create(FileDTO::fromStoreRequest($uploadedFile)->toArray());
                 return $this->attachFileToUserAction->execute($new_file);
             }
+            //TODO: Fix problem here
             if ($similar_name && $similar_hash) {
-                return $this->attachFileToUserAction->execute($file_item);
+                 $file_item->users()->attach(auth()->user()->id);
+                 return $file_item;
             }
 
         }

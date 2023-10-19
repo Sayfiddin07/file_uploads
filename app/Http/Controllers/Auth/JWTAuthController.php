@@ -15,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Throwable;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
 class JWTAuthController extends Controller
 {
@@ -58,7 +59,7 @@ class JWTAuthController extends Controller
         try {
             $token = $tokenResponseAction->execute(TokenDTO::fromStr(auth()->refresh()));
             return ResponseHelper::success(message: "Token refreshed", data: $token);
-        }catch (TokenBlacklistedException $e){
+        }catch (TokenExpiredException $e){
             return ResponseHelper::error(message: $e->getMessage(),statusCode: 403);
         }
         catch (Throwable $e) {
