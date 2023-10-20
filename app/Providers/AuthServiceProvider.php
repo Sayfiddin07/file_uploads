@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Policies\FilePolicy;
-use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Gate;
 use App\Models\User;
+use App\Models\File;
+
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -15,24 +15,27 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        File::class => FilePolicy::class,
+//
     ];
 
     /**
      * Register any authentication / authorization services.
+
      */
+
     public function boot(): void
     {
         $this->registerPolicies();
-        Gate::define("delete-file", function (User $user){
-            return auth()->user()->hasRole("admin") || auth()->user()->hasRole("moderator");
+
+        Gate::define("delete-file", function (User $auth_user, File $file, User $file_user)  {
+            if ($auth_user->hasRole("admin")) {
+                return true;
+            }
+            if ($auth_user->hasRole("moderator")) {
+                return !$file_user->hasRole('admin');
+            }
+            return !$auth_user->hasRole('user');
         });
-        // ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
-        //     return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
-        // });
 
-
-
-        //
     }
 }

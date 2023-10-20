@@ -13,14 +13,17 @@ class JWTMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Request $request
+     * @param Closure $next
+
+     * @return Response
      */
     public function handle(Request $request, Closure $next): Response
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
             if (!$user) {
-                return response()->json(['message' => 'user not found'], 500);
+                return response()->json(['message' => 'User not found'], 500);
             }
         } catch (JWTException $e) {
             return response()->json(['message' => $e->getMessage()], 500);

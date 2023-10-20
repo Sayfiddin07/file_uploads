@@ -8,7 +8,7 @@ use App\Helpers\ResponseHelper;
 use App\Http\Requests\StoreFileRequest;
 use App\Models\File;
 use App\Models\User;
-use Gate;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 
 
@@ -17,15 +17,15 @@ use Throwable;
 class FileController extends Controller
 {
 
-    public function index()
+    public function index():JsonResponse
     {
         try{
             $files = File::initQuery()->get();
             return ResponseHelper::success(data: $files->toArray());
         }catch(Throwable $e){
-            return ResponseHelper::error(message: $e->getMessage(), statusCode:500);
+            return ResponseHelper::error(message: $e->getMessage());
         }
-       
+
     }
 
     public function store(StoreFileRequest $request, StoreFileAction $storeFileAction): JsonResponse
@@ -35,21 +35,22 @@ class FileController extends Controller
             $result = $storeFileAction->execute($file);
             return ResponseHelper::success(data: $result->toArray());
         } catch (Throwable $e) {
-            return ResponseHelper::success(message: $e->getMessage());
+            return ResponseHelper::error(message: $e->getMessage());
         }
     }
 
     public function destroy(User $user, File $file, DeleteFileAction $deleteFileAction):JsonResponse
     {
-        if(!Gate::allows("delete-file")){
+
+        if(!Gate::allows("delete-file", [$file, $user])){
             return ResponseHelper::error(message: "Unauthorized", statusCode:403);
         }
 
         try {
-            $deleteFileAction->exectue($user, $file);
+            $deleteFileAction->execute($user, $file);
             return ResponseHelper::success(message: 'Successfully deleted', statusCode:201);
         } catch (Throwable $e) {
-            return ResponseHelper::error(message: $e->getMessage());
+            return ResponseHelper::error(message: $e->getMessage(), statusCode: 500);
         }
     }
 }

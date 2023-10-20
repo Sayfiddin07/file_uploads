@@ -31,8 +31,8 @@ class File extends Model
                 return $q->where('id', '=', auth()->id());
             });
         }
-            return $query;
-      
+        return $query->with('users');
+
     }
 
 

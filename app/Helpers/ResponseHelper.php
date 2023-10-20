@@ -13,7 +13,7 @@ class ResponseHelper
         );
     }
 
-    public static function error(bool $success = false, string $message = "Internal server error", int $statusCode = 500): JsonResponse
+    public static function error(bool $success = false, string $message = "Internal server error", int $statusCode = 500, ): JsonResponse
     {
         return response()->json(
             ['success' => $success, 'message' => $message], $statusCode

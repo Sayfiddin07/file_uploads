@@ -18,35 +18,31 @@ class StoreFileAction
 
     public function execute(UploadedFile $uploadedFile)
     {
-        $files = File::all();
-        if (count($files) === 0) {
+        $db_files = File::all();
+        $local_files = Storage::files("/");
+
+        if (count($db_files) === 0 && count($local_files) === 0) {
             $new_file = File::create(FileDTO::fromStoreRequest($uploadedFile)->toArray());
             return $this->attachFileToUserAction->execute($new_file);
         }
-        foreach ($files as $file_item) {
-            $similar_hash = $this->checkFileIdentityAction->execute(uploaded_file: $uploadedFile, local_file: $file_item);
-            $similar_name = (bool)File::where('name', '=', $uploadedFile->getClientOriginalName())->first();
-            if ($similar_name && !$similar_hash) {
-                return $this->attachFileToUserAction->execute($file_item);
-            }
-            if ($similar_hash && !$similar_name) {
-                $new_file = File::create([
-                    'name' => $uploadedFile->getClientOriginalName(),
-                    'path' => $file_item->path
-                ]);
-                return $this->attachFileToUserAction->execute($new_file);
-            }
-            if (!$similar_name && !$similar_hash) {
-                $new_file = File::create(FileDTO::fromStoreRequest($uploadedFile)->toArray());
-                return $this->attachFileToUserAction->execute($new_file);
-            }
-            //TODO: Fix problem here
-            if ($similar_name && $similar_hash) {
-                 $file_item->users()->attach(auth()->user()->id);
-                 return $file_item;
+        foreach ($local_files as $local_file) {
+            if ($this->checkFileIdentityAction->execute(uploaded_file: $uploadedFile, local_file: $local_file)) {
+                if (!$file = File::where('name', '=', $uploadedFile->getClientOriginalName())->first()) {
+                    $new_file = File::create([
+                        'name' => $uploadedFile->getClientOriginalName(),
+                        'path' => $local_file
+                    ]);
+                    return $this->attachFileToUserAction->execute($new_file);
+
+                } else {
+                    return $this->attachFileToUserAction->execute($file);
+                }
             }
 
         }
+        $new_file = File::create(FileDTO::fromStoreRequest($uploadedFile)->toArray());
+        return $this->attachFileToUserAction->execute($new_file);
+
 
     }
 

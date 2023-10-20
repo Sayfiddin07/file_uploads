@@ -8,9 +8,9 @@ class AttachFileToUserAction
 {
     public function execute(File $file): File
     {
-        $file->users()->sync([
-            'user_id' => auth()->user()->id
-        ]);
+        if(!auth()->user()->files->contains($file->id)){
+            auth()->user()->files()->attach($file->id);
+        };
         return $file;
     }
 }
