@@ -26,7 +26,7 @@ class JWTMiddleware
                 return response()->json(['message' => 'User not found'], 500);
             }
         } catch (JWTException $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 401);
         }
         return $next($request);
     }
