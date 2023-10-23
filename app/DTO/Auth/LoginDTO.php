@@ -10,8 +10,7 @@ class LoginDTO extends Data
     public function __construct(
         public string $email,
         public string $password
-    )
-    {
+    ) {
     }
 
     public static function fromRequest(LoginRequest $request): self

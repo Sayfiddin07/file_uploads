@@ -9,10 +9,9 @@ use Illuminate\Http\UploadedFile;
 class StoreFileAction
 {
     public function __construct(
-        private readonly AttachFileToUserAction  $attachFileToUserAction,
+        private readonly AttachFileToUserAction $attachFileToUserAction,
         private readonly CheckFileIdentityAction $checkFileIdentityAction,
-    )
-    {
+    ) {
     }
 
     public function execute(UploadedFile $uploadedFile)
@@ -41,8 +40,6 @@ class StoreFileAction
         }
         $new_file = File::create(FileDTO::fromStoreRequest($uploadedFile)->toArray());
         return $this->attachFileToUserAction->execute($new_file);
-
-
     }
 
 }

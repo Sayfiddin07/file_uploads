@@ -15,7 +15,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-//
+        //
     ];
 
     /**
@@ -27,7 +27,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define("delete-file", function (User $auth_user, File $file, User $file_user)  {
+        Gate::define("delete-file", function (User $auth_user, File $file, User $file_user) {
             if ($auth_user->hasRole("admin")) {
                 return true;
             }
