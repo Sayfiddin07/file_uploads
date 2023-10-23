@@ -34,10 +34,9 @@ class Handler extends ExceptionHandler
                 'code' => 500,
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
-                'trace' => $e->getTrace(),
                 'line' => $e->getLine()
 
-            ]);
+            ],500);
 
         });
         $this->renderable(function (Throwable $e, $request) {
