@@ -33,9 +33,8 @@ class Handler extends ExceptionHandler
                 'status' => false,
                 'code' => 500,
                 'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
 
+                'file'=>$e->getFile(),
             ],500);
 
         });

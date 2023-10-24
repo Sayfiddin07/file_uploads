@@ -4,6 +4,7 @@ namespace App\Actions\Auth;
 
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\User;
 class CurrentUserAction
