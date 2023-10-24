@@ -14,7 +14,6 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
 class JWTAuthController extends Controller
@@ -34,7 +33,7 @@ class JWTAuthController extends Controller
     public function user(CurrentUserAction $currentUserAction): JsonResponse
     {
         try {
-            $current_user = $currentUserAction->execute(auth()->user());
+            $current_user = $currentUserAction->execute(auth()->user()->load('roles'));
             return ResponseHelper::success(data: $current_user->toArray());
         } catch (JWTException $e) {
             return ResponseHelper::error(message: $e->getMessage(), statusCode: 401);

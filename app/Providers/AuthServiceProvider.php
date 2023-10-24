@@ -32,7 +32,7 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }
             if ($auth_user->hasRole("moderator")) {
-                return !$file_user->hasRole('admin');
+              return !$file_user->hasRole('admin') && !($auth_user->id !== $file_user->id);
             }
             return !$auth_user->hasRole('user');
         });

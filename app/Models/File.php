@@ -11,22 +11,25 @@ class File extends Model
 {
     use HasFactory;
 
+
     protected $fillable = [
         'name',
-        'path'
+        'path',
+        'md5'
     ];
 
+    protected $hidden = ['md5'];
 
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_files');
     }
 
-    public function scopeInitQuery(Builder $query):Builder
+    public function scopeInitQuery(Builder $query): Builder
     {
-        $user= auth()->user();
+        $user = auth()->user();
 
-        if($user->hasRole('user')){
+        if ($user->hasRole('user')) {
             return $query->whereHas('users', function (Builder $q) {
                 return $q->where('id', '=', auth()->id());
             });

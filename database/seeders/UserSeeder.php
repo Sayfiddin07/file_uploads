@@ -41,7 +41,7 @@ class UserSeeder extends Seeder
                     'email'=>'john@mail.com',
                     'password'=>bcrypt('password')
                 ],
-                ['role_id'=>$user_role->id],
+                ['role_id'=>$moderator_role->id],
             ],
             [
                 [
@@ -66,7 +66,7 @@ class UserSeeder extends Seeder
                     'password'=>bcrypt('password')
                 ],
                 ['role_id'=>$user_role->id],
-            
+
             ],
         ];
 

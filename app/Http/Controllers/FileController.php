@@ -30,6 +30,7 @@ class FileController extends Controller
 
     public function store(StoreFileRequest $request, StoreFileAction $storeFileAction): JsonResponse
     {
+
         try {
             $file = $request->file('file');
             $result = $storeFileAction->execute($file);
@@ -45,7 +46,6 @@ class FileController extends Controller
         if(!Gate::allows("delete-file", [$file, $user])){
             return ResponseHelper::error(message: "Unauthorized", statusCode:403);
         }
-
         try {
             $deleteFileAction->execute($user, $file);
             return ResponseHelper::success(message: 'Successfully deleted', statusCode:201);
